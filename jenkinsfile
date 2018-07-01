@@ -22,10 +22,13 @@ pipeline
     {
         stage('Build it')
         {
-            script
+            steps
             {
-                Gitbook runner = new Gitbook(this)
-                runner.run()
+                script
+                {
+                    Gitbook runner = new Gitbook(this)
+                    runner.run()
+                }
             }
         }
     }
