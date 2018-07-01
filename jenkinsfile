@@ -1,5 +1,7 @@
 @Library('jenkins-pipeline-workshop-library') _
 
+import org.mesha.pipeline.gitbook.Gitbook
+
 pipeline
 {
     options {
@@ -18,42 +20,12 @@ pipeline
     }
     stages
     {
-        stage('Build preparations')
+        stage('Build it')
         {
-            steps
+            script
             {
-                script
-                {
-                    // calculate GIT lastest commit short-hash
-                    gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    shortCommitHash = gitCommitHash.take(7)
-                    // calculate a sample version tag
-                    env.VERSION = shortCommitHash
-                    // set the build display name
-                    currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
-                    env.IMAGE = "$PROJECT:$VERSION"
-                    env.IMAGE_LATEST = "$PROJECT:latest"
-                }
-            }
-        }
-        stage('Docker build')
-        {
-            steps
-	        {
-                script
-                {
-                    dockerBuild(env.IMAGE, env.IMAGE_LATEST)
-                }
-	        }
-        }
-        stage('Publish')
-        {
-            steps
-	        {
-                script
-	            {
-                    gitbookPublish(env.IMAGE, env.IMAGE_LATEST)
-                }
+                Gitbook runner = new Gitbook(this)
+                runner.run()
             }
         }
     }
