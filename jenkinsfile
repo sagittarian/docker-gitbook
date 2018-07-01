@@ -3,16 +3,16 @@ pipeline
     options {
       buildDiscarder(logRotator(numToKeepStr: '5'))
     }
-    agent 
+    agent
     {
-         node 
+         node
          {
             label 'generic'
          }
     }
     environment
     {
-        PROJECT="shelleg/gitbook"
+        PROJECT="amesha/gitbook"
     }
     stages
     {
@@ -34,11 +34,11 @@ pipeline
                }
            }
        }
-       stage('Docker build') 
+       stage('Docker build')
        {
-          steps 
+          steps
 	  {
-              script 
+              script
 	      {
                     // Build the docker image using a Dockerfile
                     docker.build("${env.IMAGE}")
@@ -47,11 +47,11 @@ pipeline
               }
 	  }
         }
-        stage('Publish') 
+        stage('Publish')
         {
-           steps 
+           steps
 	   {
-              script 
+              script
 	      {
                   docker.withRegistry("https://registry.hub.docker.com", "dockerHub")
 		  {
