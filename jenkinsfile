@@ -1,14 +1,16 @@
+@Library('jenkins-pipeline-workshop-library')
+
 pipeline
 {
     options {
-      buildDiscarder(logRotator(numToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '5'))
     }
     agent
     {
-         node
-         {
+        node
+        {
             label 'generic'
-         }
+        }
     }
     environment
     {
@@ -31,37 +33,28 @@ pipeline
                     currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
                     env.IMAGE = "$PROJECT:$VERSION"
                     env.IMAGE_LATEST = "$PROJECT:latest"
-               }
-           }
-       }
-       stage('Docker build')
-       {
-          steps
-	  {
-              script
-	      {
-                    // Build the docker image using a Dockerfile
-                    docker.build("${env.IMAGE}")
-                    // override the latest tag
-                    docker.build("${env.IMAGE_LATEST}")
-              }
-	  }
+                }
+            }
+        }
+        stage('Docker build')
+        {
+            steps
+	        {
+                script
+                {
+                    dockerBuild(env.IMAGE, env.IMAGE_LATEST)
+                }
+	        }
         }
         stage('Publish')
         {
-           steps
-	   {
-              script
-	      {
-                  docker.withRegistry("https://registry.hub.docker.com", "dockerHub")
-		  {
-                	// version eq latest git tag
-                	docker.image("${env.IMAGE}").push()
-                	// override the latest tag
-                	docker.image("${env.IMAGE_LATEST}").push()
-                  }
-              }
-           }
+            steps
+	        {
+                script
+	            {
+                    gitbookPublish(env.IMAGE, env.IMAGE_LATEST)
+                }
+            }
         }
     }
 }
