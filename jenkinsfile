@@ -1,4 +1,4 @@
-@Library('jenkins-pipeline-workshop-library')
+@Library('jenkins-pipeline-workshop-library') _
 
 pipeline
 {
